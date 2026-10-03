@@ -59,10 +59,30 @@ cargo build --locked -p robotd -p robotctl -j 2
 
 本次只运行了 `robotd`，因此 `updaterd` 和 `configd` 的 socket 不存在，健康报告显示无法连接。总线、IMU、电池和舵机温度是 FakeIo 提供的模拟值；CPU 温度和频率来自主板。本次没有加载 ONNX 策略，也没有验证飞特舵机、真实 IMU、摄像头或 NPU。
 
+## systemd 开发服务验证
+
+用户在主板将源码快进至 `e62f3f8`，执行 `check`、脚本测试和 `sudo sh scripts/a733-dev.sh install duck`。板卡检查及脚本测试通过，服务显示 `enabled`、`active (running)`，进程以 `duck` 用户运行。随后 `sh scripts/a733-dev.sh health --json` 得到：
+
+| 指标 | 结果 |
+|---|---|
+| robot.healthy | true |
+| control_loop.achieved_hz | 50.024959953768935 |
+| control_loop.ticks | 21,427 |
+| control_loop.missed | 0 |
+| control_loop.last_tick_age_ms | 3 |
+| bus.consecutive_errors / startup_failures | 0 / 0 |
+| imu.ready | true（虚拟硬件） |
+| CPU 温度 | 63.178 °C |
+| CPU 降频等级 | 0 |
+
+按 50 Hz 估算约运行 7 分 8 秒；[服务健康报告](../../artifacts/board-validation/2026-10-03-a733-service-health.json)保存本次 JSON。初次查询发生在第 4 个 tick，频率为 `null`、IMU 未就绪；后续查询确认统计已更新。频率和慢速传感器状态由源码中的 1 秒统计窗口更新。
+
+首次启动日志还包含身份信息写入警告：开发服务创建独立的运行目录，现有身份发布函数却默认写 `/run/robotd/identity.json`，普通用户无法创建父目录。修正是在服务配置中设置已有的 `DUCK_RUNTIME_DIR=/run/dreamduck-a733-dev`，让该函数写入 systemd 分配给用户的目录，不修改 Rust 源码。单元生成测试先因缺少该设置而失败，再通过修正后的检查；实际身份文件写入和警告消失仍待主板复验。
+
 ## 下一阶段
 
-基础构建、进程启动、持续运行和本地 IPC 已取得成功记录。已新增 [A733 开发服务入口](../robot/orangepi-a733.md)，通过设备树识别板卡，并生成独立的虚拟硬件 systemd 服务；安装、自动启动、重启后 SSH 管理和服务运行仍待主板验收。
+基础构建、进程启动、持续运行、本地 IPC，以及 [A733 开发服务](../robot/orangepi-a733.md)的实际安装和后台运行已取得成功记录。开机启动已设置；身份目录修正、重启后的自动启动与 SSH 管理仍待主板验收。
 
-开发入口的本地检查已通过：POSIX shell 语法检查、ShellCheck 0.11.0、设备树与架构识别测试、非 root 服务账号和操作权限测试、socket 与服务命令路由测试、`git diff --check`。测试在 Windows 的 Git Bash 中执行；真实 Linux/systemd 的安装和重启不能由这些检查代替。没有修改 Rust 源码，本次未在 Windows 运行 Rust 全工作区测试；主板此前执行的是构建与运行验证。
+开发入口的本地检查已通过：POSIX shell 语法检查、ShellCheck 0.11.0、设备树与架构识别测试、非 root 服务账号和操作权限测试、socket 与服务命令路由测试、`git diff --check`。测试在 Windows 的 Git Bash 中执行，用户也在主板执行了 `e62f3f8` 的脚本测试。没有修改 Rust 源码，本次未在 Windows 运行 Rust 全工作区测试；主板此前执行的是构建与运行验证。身份目录修正的实际启动和重启验收需要继续执行。
 
 发布包的 `hooks/preinstall.in` 也会调用 GStreamer、RKAIQ 和 NPU 安装脚本，所以平台选择需要覆盖首次部署与更新两条路径；更新钩子的职责见 [updater-design.md §9.1](../design/updater-design.md#91-if-a-fresh-install-does-it-the-hook-does-it)。

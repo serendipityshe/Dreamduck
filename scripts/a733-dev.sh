@@ -3,7 +3,8 @@
 set -eu
 
 UNIT=dreamduck-a733-dev.service
-SOCKET=/run/dreamduck-a733-dev/robotd.sock
+RUNTIME_ROOT=/run/dreamduck-a733-dev
+SOCKET=$RUNTIME_ROOT/robotd.sock
 REPO=$(CDPATH='' cd -- "$(dirname -- "$0")/.." && pwd -P)
 
 die() { printf 'error: %s\n' "$*" >&2; exit 1; }
@@ -69,6 +70,7 @@ RuntimeDirectory=dreamduck-a733-dev
 RuntimeDirectoryMode=0750
 NoNewPrivileges=yes
 Environment=RUST_LOG=info
+Environment=DUCK_RUNTIME_DIR=$RUNTIME_ROOT
 StandardOutput=journal
 StandardError=journal
 

@@ -64,6 +64,14 @@ sudo sh scripts/a733-dev.sh install duck
 
 进程以 `duck` 用户运行，直接使用源码目录的 `target/debug/robotd` 和 [开发参数](../../deploy/robotd-a733-dev.toml)。socket 为 `/run/dreamduck-a733-dev/robotd.sock`，服务名为 `dreamduck-a733-dev.service`。请保留源码目录和编译产物；重新编译后需重启服务才能运行新程序。参数与控制循环的含义见 [robotd-design.md](../design/robotd-design.md)。
 
+服务通过已有的 `DUCK_RUNTIME_DIR` 环境变量，将身份文件写到 `/run/dreamduck-a733-dev/robotd/identity.json`；这样普通用户可以在 systemd 分配的目录中写入，而无需创建默认的 `/run/robotd`。重新执行 `install duck` 会更新服务配置并重启。检查身份文件：
+
+```bash
+cat /run/dreamduck-a733-dev/robotd/identity.json
+```
+
+`health` 中的软件版本通过 socket 查询，不依赖此文件；未在编译时嵌入 Git 提交号的程序仍会显示 `revision: null`。
+
 ## 常用命令
 
 ```bash

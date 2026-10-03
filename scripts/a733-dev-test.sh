@@ -59,6 +59,9 @@ grep -qx 'User=duck' "$TEST_DIR/unit"
 grep -qx 'Group=duck' "$TEST_DIR/unit"
 grep -qx 'RuntimeDirectory=dreamduck-a733-dev' "$TEST_DIR/unit"
 grep -qx 'RuntimeDirectoryMode=0750' "$TEST_DIR/unit"
+# The default /run/robotd directory cannot be created by the bench account.
+# Pin the existing identity writer to the directory systemd grants this service.
+grep -qx 'Environment=DUCK_RUNTIME_DIR=/run/dreamduck-a733-dev' "$TEST_DIR/unit"
 grep -Fqx "WorkingDirectory=$REPO" "$TEST_DIR/unit"
 grep -Fqx "ExecStart=$REPO/target/debug/robotd --fake --no-policy --params $REPO/deploy/robotd-a733-dev.toml --socket /run/dreamduck-a733-dev/robotd.sock" "$TEST_DIR/unit"
 reject unit root
