@@ -77,12 +77,16 @@ cargo build --locked -p robotd -p robotctl -j 2
 
 按 50 Hz 估算约运行 7 分 8 秒；[服务健康报告](../../artifacts/board-validation/2026-10-03-a733-service-health.json)保存本次 JSON。初次查询发生在第 4 个 tick，频率为 `null`、IMU 未就绪；后续查询确认统计已更新。频率和慢速传感器状态由源码中的 1 秒统计窗口更新。
 
-首次启动日志还包含身份信息写入警告：开发服务创建独立的运行目录，现有身份发布函数却默认写 `/run/robotd/identity.json`，普通用户无法创建父目录。修正是在服务配置中设置已有的 `DUCK_RUNTIME_DIR=/run/dreamduck-a733-dev`，让该函数写入 systemd 分配给用户的目录，不修改 Rust 源码。单元生成测试先因缺少该设置而失败，再通过修正后的检查；实际身份文件写入和警告消失仍待主板复验。
+首次启动日志还包含身份信息写入警告：开发服务创建独立的运行目录，现有身份发布函数却默认写 `/run/robotd/identity.json`，普通用户无法创建父目录。修正是在服务配置中设置已有的 `DUCK_RUNTIME_DIR=/run/dreamduck-a733-dev`，让该函数写入 systemd 分配给用户的目录，不修改 Rust 源码。单元生成测试先因缺少该设置而失败，再通过修正后的检查。
+
+用户在主板快进至 `60c337f` 后，脚本测试再次通过，重新安装并启动服务。身份文件成功写入 `/run/dreamduck-a733-dev/robotd/identity.json`，其中 `service=robotd`、`version=0.15.1`、`exe=/home/duck/dreamduck-work/target/debug/robotd`、`pid=7654`；PID 与服务状态中的 Main PID 一致。本次启动日志未再出现身份发布失败警告。等待 2 秒后的健康查询为 `healthy=true`、`achieved_hz=49.95629658319124`、`ticks=103`、`missed=0`、IMU ready（虚拟硬件），CPU 温度 62.992 °C、降频等级 0。[目录修正复验记录](../../artifacts/board-validation/2026-10-03-a733-identity-check.json)保存身份和健康数据。
+
+每次启动新进程后 tick 计数重新开始，因此此次 103 个 tick 与之前的长时间运行结果分别对应不同进程。声音库尚未安装，日志说明跳过声音；`updaterd` 与 `configd` 也仍未部署。身份中的 revision 字段被省略、健康 JSON 中 revision 为 null，均对应本机编译时未嵌入提交号。
 
 ## 下一阶段
 
-基础构建、进程启动、持续运行、本地 IPC，以及 [A733 开发服务](../robot/orangepi-a733.md)的实际安装和后台运行已取得成功记录。开机启动已设置；身份目录修正、重启后的自动启动与 SSH 管理仍待主板验收。
+基础构建、进程启动、持续运行、本地 IPC，以及 [A733 开发服务](../robot/orangepi-a733.md)的实际安装、后台运行和身份目录修正已取得成功记录。开机启动已设置；重启后的自动启动与 SSH 管理仍待主板验收。
 
-开发入口的本地检查已通过：POSIX shell 语法检查、ShellCheck 0.11.0、设备树与架构识别测试、非 root 服务账号和操作权限测试、socket 与服务命令路由测试、`git diff --check`。测试在 Windows 的 Git Bash 中执行，用户也在主板执行了 `e62f3f8` 的脚本测试。没有修改 Rust 源码，本次未在 Windows 运行 Rust 全工作区测试；主板此前执行的是构建与运行验证。身份目录修正的实际启动和重启验收需要继续执行。
+开发入口的本地检查已通过：POSIX shell 语法检查、ShellCheck 0.11.0、设备树与架构识别测试、非 root 服务账号和操作权限测试、socket 与服务命令路由测试、`git diff --check`。测试在 Windows 的 Git Bash 中执行，用户也在主板执行了 `e62f3f8` 和 `60c337f` 的脚本测试。没有修改 Rust 源码，本次未在 Windows 运行 Rust 全工作区测试；主板执行的是构建、脚本测试与运行验证。重启验收需要继续执行。
 
 发布包的 `hooks/preinstall.in` 也会调用 GStreamer、RKAIQ 和 NPU 安装脚本，所以平台选择需要覆盖首次部署与更新两条路径；更新钩子的职责见 [updater-design.md §9.1](../design/updater-design.md#91-if-a-fresh-install-does-it-the-hook-does-it)。

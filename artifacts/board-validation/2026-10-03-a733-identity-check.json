@@ -1,0 +1,76 @@
+{
+    "source_commit":  "60c337f84505c3a11ef0fa81d0430cfef3903f68",
+    "identity":  {
+                     "service":  "robotd",
+                     "version":  "0.15.1",
+                     "exe":  "/home/duck/dreamduck-work/target/debug/robotd",
+                     "pid":  7654
+                 },
+    "health":  {
+                   "robot":  {
+                                 "healthy":  true,
+                                 "battery":  {
+                                                 "volts":  7.4,
+                                                 "percent":  50.00000000000006
+                                             },
+                                 "motors":  {
+                                                "hottest":  "left_hip_yaw",
+                                                "max_c":  32.0,
+                                                "mean_c":  32.0
+                                            },
+                                 "cpu_temp_c":  62.992,
+                                 "cpu_throttle":  {
+                                                      "level":  0,
+                                                      "max_level":  8,
+                                                      "khz":  2002000,
+                                                      "max_khz":  2002000
+                                                  },
+                                 "control_loop":  {
+                                                      "target_hz":  50.0,
+                                                      "achieved_hz":  49.95629658319124,
+                                                      "ticks":  103,
+                                                      "missed":  0,
+                                                      "last_tick_age_ms":  10
+                                                  },
+                                 "bus":  {
+                                             "consecutive_errors":  0,
+                                             "startup_failures":  0
+                                         },
+                                 "imu":  {
+                                             "ready":  true,
+                                             "stale_blocks":  0,
+                                             "consecutive_stale_blocks":  0
+                                         }
+                             },
+                   "software":  {
+                                    "robotctl":  "0.15.1",
+                                    "robotctl_revision":  null,
+                                    "services":  [
+                                                     {
+                                                         "name":  "updaterd",
+                                                         "version":  null,
+                                                         "revision":  null,
+                                                         "error":  "cannot reach updaterd at /run/updaterd.sock: No such file or directory (os error 2)\nNothing is listening at that path. Is the service running, and is this the socket it was told to use?  systemctl status updaterd"
+                                                     },
+                                                     {
+                                                         "name":  "robotd",
+                                                         "version":  "0.15.1",
+                                                         "revision":  null
+                                                     },
+                                                     {
+                                                         "name":  "configd",
+                                                         "version":  null,
+                                                         "revision":  null,
+                                                         "error":  "cannot reach configd at /run/configd.sock: No such file or directory (os error 2)\nNothing is listening at that path. Is the service running, and is this the socket it was told to use?  systemctl status configd"
+                                                     }
+                                                 ],
+                                    "components":  [
+
+                                                   ],
+                                    "warnings":  [
+                                                     "updaterd could not be asked what it is running: cannot reach updaterd at /run/updaterd.sock: No such file or directory (os error 2)\nNothing is listening at that path. Is the service running, and is this the socket it was told to use?  systemctl status updaterd",
+                                                     "configd could not be asked what it is running: cannot reach configd at /run/configd.sock: No such file or directory (os error 2)\nNothing is listening at that path. Is the service running, and is this the socket it was told to use?  systemctl status configd"
+                                                 ]
+                                }
+               }
+}
