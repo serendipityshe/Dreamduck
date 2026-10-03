@@ -19,6 +19,7 @@ docs give the reasoning and point at it.
 | [`pair-a-gamepad.md`](robot/pair-a-gamepad.md) | Once per pad: pairing mode, `pad pair`, and what to do when it will not bond. |
 | [`cheatsheet-dev.md`](robot/cheatsheet-dev.md) | The commands that need a dev board: branch builds, candidates, dev pushes. |
 | [`dev-push.md`](robot/dev-push.md) | Build on your machine and install on the board over ssh, with no CI run. |
+| [`orangepi-a733.md`](robot/orangepi-a733.md) | Orange Pi Zero 3W (A733): source transfer, native builds and a fake-only development service. |
 | [`simulation.md`](robot/simulation.md) | The simulated duck: `scripts/duck-sim`, the real daemons against a MuJoCo body, one duck or several in containers. |
 | [`duckctl.md`](robot/duckctl.md) | Every `duckctl` command — the robot from a laptop, over Bluetooth. |
 | [`install-dev.md`](robot/install-dev.md) | Setting up a board for development, from nothing. |
@@ -59,6 +60,7 @@ Dated records rather than reference. They describe a moment, and go stale on pur
 | | |
 |---|---|
 | [`roadmap.md`](project/roadmap.md) | Milestones, and what works today versus what is designed. |
+| [`a733-bringup.md`](project/a733-bringup.md) | Orange Pi Zero 3W (A733): native ARM64 build and fake-backend runtime evidence, and the deployment work still pending. |
 | [`ci-setup.md`](project/ci-setup.md) | One-time setup for the release pipeline: keys, secrets, rotation. |
 | [`install-path-gap.md`](project/install-path-gap.md) | Why four install-path bugs reached a board, and what closed it. Closed — the rule it taught is [`updater-design.md`](design/updater-design.md) §9.1. |
 | [`slice-2-bringup.md`](project/slice-2-bringup.md) | What a real Radxa Zero 3W did with slice 2. |

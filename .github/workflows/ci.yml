@@ -110,7 +110,7 @@ jobs:
       # a bashism would work on a dev box and fail on the board.
       - name: Lint the installer
         run: |
-          for script in scripts/install.sh scripts/setup-board.sh scripts/setup-gstreamer.sh scripts/setup-login.sh scripts/setup-quiet-boot.sh scripts/migrate-network.sh scripts/provision.sh scripts/provision-board.sh scripts/ci-release-notes.sh scripts/robot-rescue scripts/dev-push.sh scripts/pad-link-test.sh scripts/pad-stack-report.sh scripts/seed-policies.sh scripts/seed-detector.sh scripts/duck-sim; do
+          for script in scripts/install.sh scripts/setup-board.sh scripts/setup-gstreamer.sh scripts/setup-login.sh scripts/setup-quiet-boot.sh scripts/migrate-network.sh scripts/provision.sh scripts/provision-board.sh scripts/ci-release-notes.sh scripts/robot-rescue scripts/dev-push.sh scripts/pad-link-test.sh scripts/pad-stack-report.sh scripts/seed-policies.sh scripts/seed-detector.sh scripts/duck-sim scripts/a733-dev.sh scripts/a733-dev-test.sh; do
             sh -n "$script"
             shellcheck --shell=sh "$script"
             # The one-liner is only correct if the file is executable and self-contained.
@@ -120,6 +120,9 @@ jobs:
           # way into the artifact, and `hooks_are_packaged_executable` is what checks that.
           sh -n hooks/postinstall
           shellcheck --shell=sh hooks/postinstall
+
+      - name: Check the A733 development entry point
+        run: sh scripts/a733-dev-test.sh
 
       # `board-test.sh` separately, because it needs different flags and was excluded for it.
       #

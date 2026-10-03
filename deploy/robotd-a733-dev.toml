@@ -1,0 +1,6 @@
+# A source-built bench instance must not inherit a real robot's /etc parameters.
+[control]
+hz = 50
+
+[policy]
+enabled = false
